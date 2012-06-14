@@ -1,0 +1,95 @@
+#!/usr/bin/env python
+
+import os, sys, yaml
+from glob import glob
+import pdb
+
+def post(): # just need to add article and div class 
+    flist = glob('_site/*.html')
+    for fn in flist:
+        cont = file(fn, 'r').readlines()
+        out = file('tmp','w')
+
+
+        isFirstSlide = 1
+        tmpl = ""
+        for singleline in cont:
+            line = singleline.rstrip()
+            if line.lstrip().startswith('<p><tmpl>'):
+                    tmpl = line.lstrip().replace('<p><tmpl>','').replace('</tmpl></p>','')
+                    getclass = " class='%s'" % tmpl
+
+            if line.lstrip()  == "<hr />":
+                if isFirstSlide == 1: # beginning of slide
+                    out.write("<article%s>\n" % (getclass if tmpl !="" else ""))
+                    isFirstSlide = 0
+                else: # rest part of slide
+                    out.write("</article>\n\n<article%s>\n" % (getclass if tmpl !="" else ""))
+                    tmpl = "" # tmpl expired
+            else:
+                if line.lstrip() == "</section>":
+                    out.write("</article>\n\n")
+                if line.lstrip().startswith('<p><tmpl>'):
+                    continue
+                out.write(line)
+                out.write("\n")
+        out.close()
+        os.system('cat tmp > %s' % fn)
+
+def post2(): # just need to add article and div class 
+    flist = glob('_site/*.html')
+    for fn in flist:
+        cont = file(fn, 'r').readlines()
+        out = file('tmp','w')
+
+        isFirstSlide = 1
+        for singleline in cont:
+            line = singleline.rstrip()
+            if line.lstrip()  == "<hr />":
+                if isFirstSlide == 1: # the first slide
+                    out.write("<article>\n")
+                    isFirstSlide = 0
+                else: # other slides
+                    out.write("</article>\n\n<article>\n")
+            elif line.lstrip() == "</section>":
+                out.write("</article>\n\n")
+                out.write(line)
+                out.write("\n")
+            else:
+                out.write(line)
+                out.write("\n")
+        out.close()
+        os.system('cat tmp > %s' % fn)
+
+def post1(): # just need to add article and div class 
+    flist = glob('_site/*.html')
+    for fn in flist:
+        cont = file(fn, 'r').readlines()
+        out = file('tmp','w')
+
+        isFirstSlide = 1
+        isStyle = 0
+        style = ""
+        for singleline in cont:
+            line = singleline.rstrip()
+            if line.lstrip()  == "<hr />":
+                getclass = " class='%s'" % style if isStyle else "" 
+                if isFirstSlide == 1: # the first slide
+                    out.write("<article%s>\n" % getclass)
+                    isFirstSlide = 0
+                else: # other slides
+                    out.write("</article>\n\n<article %>\n" % getclass)
+                isStyle = 1
+            elif line.lstrip() == "</section>":
+                out.write("</article>\n\n")
+                out.write(line)
+                out.write("\n")
+                isStyle = 0
+            else:
+                out.write(line)
+                out.write("\n")
+                isStyle = 0
+        out.close()
+        os.system('cat tmp > %s' % fn)
+
+post()

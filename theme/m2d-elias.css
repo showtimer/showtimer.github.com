@@ -1,0 +1,13 @@
+.slides > article {
+    font-family: 'Helvetica Neue', Helvetica, Arial, default;
+    background-color: #333;
+    color: white;
+    text-shadow: rgb(0,0,0) 1px 1px 5px;
+}
+
+article > h2 {
+  color: white;
+  background: rgba(255, 255, 255, 0);
+  border-bottom: 0;
+}
+
